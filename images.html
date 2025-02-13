@@ -1,0 +1,110 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.min.css" type="text/css">
+<style>
+    table {
+        table-layout:fixed !important;
+    }
+    th {
+        text-align:center !important;
+    }
+    .logo_td {
+        width: 45px;
+        height: 25px;
+    }
+    .logo {
+        max-width: 25px;
+        max-height: 25px;
+        margin: auto;
+        display: unset !important;
+    }
+</style>
+<script>
+$(document).ready(function() {
+    $('#container').DataTable({
+        paging: false,
+        scrollX: true,
+        order: [[1, '']],
+        ajax: {
+            url: 'https://api.linuxserver.io/api/v1/images',
+            dataSrc: 'data.repositories.linuxserver'
+        },
+        columns: [
+            { 
+                data: 'project_logo',
+                "bSortable": false,
+                className: 'logo_td',
+                render: function (data, type, row, meta) {
+                    return '<img src="' + data + '" class="logo" />';
+                } 
+            },
+            { 
+                data: 'name',
+                render: function (data, type, row, meta) {
+                    return '<a href="https://docs.linuxserver.io/images/docker-' + data + '/">' + data + '</a>';
+                } 
+            },
+            { 
+                data: 'architectures',
+                render: function (data, type, row, meta) {
+                    var archs = [];
+                    for (const item of data) {
+                        archs.push(item.arch);
+                    }
+                    return archs.join(", ");
+                } 
+            },
+            { 
+                data: 'tags',
+                render: function (data, type, row, meta) {
+                    var tags = [];
+                    if (data.length > 5) {
+                        return '<a href="https://docs.linuxserver.io/images/docker-' + row.name + '/#version-tags">' + data.length + ' tags</a>';
+                    }
+                    for (const item of data) {
+                        tags.push(item.tag);
+                    }
+                    return tags.join(", ");
+                } 
+            },
+            { 
+                data: 'category',
+                render: function (data, type, row, meta) {
+                    var links = [];
+                    var categories = data.split(",");
+                    for (const category of categories) {
+                        var link = '<a href="#" id="category" onClick="let table = new DataTable(\'#container\'); table.search(\'' + category + '\').draw();">' + category + '</a>';
+                        links.push(link);
+                    }
+                    return links.join(", ");
+                } 
+            },
+            { 
+                data: 'version',
+                render: function (data, type, row, meta) {
+                    return '<a href="https://github.com/linuxserver/docker-' + row.name + '/releases/tag/' + data + '/">' + data + '</a>';
+                } 
+            },
+            { 
+                data: 'version_timestamp',
+                render: function (data, type, row, meta) {
+                    return data.substring(0, data.length - 6);
+                } 
+            },
+        ]
+    });
+});
+</script>
+<table id="container" class="hover display nowrap">
+    <thead>
+        <tr>
+            <th width="25"></th>
+            <th width="15%">Name</th>
+            <th width="20%">Architectures</th>
+            <th width="20%">Tags</th>
+            <th width="auto">Categories</th>
+            <th width="20%">Latest Version</th>
+            <th width="120">Build Time</th>
+        </tr>
+    </thead>
+</table>
