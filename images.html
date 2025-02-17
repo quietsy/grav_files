@@ -8,6 +8,12 @@
     th {
         text-align:center !important;
     }
+    .version_link {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+        max-width: 130px;
+    }
     .logo_td {
         width: 45px;
         height: 25px;
@@ -82,7 +88,7 @@ $(document).ready(function() {
             { 
                 data: 'version',
                 render: function (data, type, row, meta) {
-                    return '<a href="https://github.com/linuxserver/docker-' + row.name + '/releases/tag/' + data + '/">' + data + '</a>';
+                    return '<a class="version_link" href="https://github.com/linuxserver/docker-' + row.name + '/releases/tag/' + data + '/">' + data + '</a>';
                 } 
             },
             { 
@@ -109,7 +115,7 @@ $(document).ready(function() {
             <th width="100">Architectures</th>
             <th width="20%">Tags</th>
             <th width="20%">Categories</th>
-            <th width="20%">Latest Version</th>
+            <th width="100">Latest Version</th>
             <th width="50">First Build</th>
             <th width="120">Last Build</th>
         </tr>
